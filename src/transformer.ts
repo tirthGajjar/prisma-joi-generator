@@ -309,9 +309,7 @@ export default class Transformer {
       .filter((item) => item && item.length > 0)
       .map((item) => {
         const [joiStringWithMainType, field, skipValidators] = item;
-        const value = skipValidators
-          ? joiStringWithMainType
-          : this.getFieldValidators(joiStringWithMainType, field);
+        const value = this.getFieldValidators(joiStringWithMainType, field);
         return value;
       });
 
@@ -409,10 +407,7 @@ export default class Transformer {
           `import { ${modelName}WhereUniqueInputSchemaObject } from './objects'`,
         ];
         await writeFileSafely(
-          path.join(
-            Transformer.outputPath,
-            `schemas/${deleteOne}.schema.ts`,
-          ),
+          path.join(Transformer.outputPath, `schemas/${deleteOne}.schema.ts`),
           `${this.getImportsForSchemas(imports)}${this.addExportSchema(
             `Joi.object().keys({ where: Joi.object().keys(${modelName}WhereUniqueInputSchemaObject)  }).required()`,
             `${modelName}DeleteOne`,

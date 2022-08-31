@@ -12,21 +12,114 @@ datasource db {
   url      = "file:./dev.db"
 }
 
-model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
-  posts Post[]
+model Resource {
+  id                  String         @id @default(cuid())
+  shortDescription    String?
+  description         String?
+  notionItemId        String?        @unique
+  name                String
+  slug                String
+  url                 String?
+  analyticsURL        String?
+  email               String?
+  mobileNumber        String?
+  address             String?
+  logo                String?
+  addedBy             User?
+  createdAt           DateTime?      @default(now())
+  updatedAt           DateTime?      @updatedAt
+  notionLastUpdatedAt DateTime
+  category            Category[]
+  tags                Tags[]
+  type                ResourceType[]
+  country             Country[]
+  city                City[]
+  state               State[]
 }
 
-model Post {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  title     String
-  content   String?
-  published Boolean  @default(false)
-  viewCount Int      @default(0)
-  author    User?    @relation(fields: [authorId], references: [id])
-  authorId  Int?
+// enum COLORS {
+//   LIGHT_GRAY
+//   GRAY
+//   BROWN
+//   ORANGE
+//   YELLOW
+//   GREEN
+//   BLUE
+//   PURPLE
+//   PINK
+//   RED
+// }
+
+model Country {
+  id           String     @id @default(cuid())
+  name         String     @unique
+  // color        COLORS     @default(LIGHT_GRAY)
+  notionItemId String?    @unique
+  Resources    Resource[]
+  updatedAt    DateTime?  @updatedAt
+  createdAt    DateTime?  @default(now())
+}
+
+model City {
+  id           String     @id @default(cuid())
+  name         String     @unique
+  // color        COLORS     @default(LIGHT_GRAY)
+  updatedAt    DateTime?  @updatedAt
+  notionItemId String?    @unique
+  Resources    Resource[]
+}
+
+model ResourceType {
+  id           String     @id @default(cuid())
+  name         String     @unique
+  // color        COLORS     @default(LIGHT_GRAY)
+  updatedAt    DateTime?  @updatedAt
+  notionItemId String?    @unique
+  Resource     Resource[]
+}
+
+model Tags {
+  id           String     @id @default(cuid())
+  name         String     @unique
+  // color        COLORS     @default(LIGHT_GRAY)
+  updatedAt    DateTime?  @updatedAt
+  notionItemId String?    @unique
+  Resource     Resource[]
+}
+
+model Category {
+  id                  String     @id @default(cuid())
+  name                String     @unique
+  slug                String     @unique
+  updatedAt           DateTime?  @updatedAt
+  notionLastUpdatedAt DateTime?
+  description         String?
+  shortDescription    String?
+  notionItemId        String?    @unique
+  emoji               String?
+  icon                String?
+  archive             Boolean?   @default(false)
+  seoDescription      String?
+  seoTitle            String?
+  seoKeywords         String?
+  bgColor             String?
+  Resources           Resource[]
+}
+
+model State {
+  id           String     @id @default(cuid())
+  name         String     @unique
+  // color        COLORS     @default(LIGHT_GRAY)
+  updatedAt    DateTime?  @default(now())
+  notionItemId String?    @unique
+  Resource     Resource[]
+}
+
+model User {
+  name         String
+  notionItemId String?
+  avatarUrl    String?
+  email        String    @unique
+  Resource     Resource? @relation(fields: [resourceId], references: [id])
+  resourceId   String?   @unique
 }
